@@ -21,12 +21,18 @@ import PartnersManagement from './pages/vacancy/AwardAndPartner/PartnersManageme
 import CreateBlog from './pages/vacancy/Blog/CreateBlog';
 import { MdAdminPanelSettings } from "react-icons/md";
 import { MdContacts } from "react-icons/md";
-import { MdOutlineMedicalServices } from "react-icons/md";
 import { FaPeopleLine } from "react-icons/fa6";
 import { FaRegNewspaper } from "react-icons/fa6";
 import { RxDashboard } from "react-icons/rx";
 import ContactsPage from './pages/vacancy/interview/ContactsPage';
-const {Header, Content, Footer, Sider} = Layout;
+import Tenants from './pages/Tenants/Tenants';
+import StallManagement from './pages/Stall Management/StallManagement';
+import LeaseAgreements from './pages/Lease Agreements/LeaseAgreements ';
+import Payments from './pages/Payments/Payments';
+import MaintenanceRequests from './pages/Maintenance Requests/MaintenanceRequests';
+import RemindersAndNotifications from './pages/Reminder And Notification/RemindersAndNotifications';
+import UserManagement from './pages/User Management/UserManagement';
+const {Header, Content, Sider} = Layout;
 
 const App = () => {
   
@@ -41,20 +47,36 @@ const App = () => {
     },
     {
       key: '2',
-      label: 'Admin Dashboard',
+      label: 'Owner Dashboard',
       icon: <MdAdminPanelSettings size={20} />,
       children: [
         {
-          key: '2',
-          label: <Link to={'/contact/info'}><MdContacts/> Contacts</Link>,
+          key: '1',
+          label: <Link to={'/tenants'}><MdContacts/> Tenants</Link>,
         },
         {
           key: '3',
-          label: <Link to={'/admin/partners'}><FaPeopleLine/> Award and Partner</Link>,
+          label: <Link to={'/stall-management'}><FaPeopleLine/> Stall Management</Link>,
         },
         {
           key: '4',
-          label: <Link to={'/admin/blog'}><FaRegNewspaper/> News And Blog</Link>,
+          label: <Link to={'/lease-agreements'}><FaRegNewspaper/> Lease Agreements</Link>,
+        },
+        {
+          key: '5',
+          label: <Link to={'/payments'}><FaRegNewspaper/> Payments</Link>,
+        },
+        {
+          key: '6',
+          label: <Link to={'/maintenance-requests'}><FaRegNewspaper/> Maintenance Requests</Link>,
+        },
+        {
+          key: '7',
+          label: <Link to={'/reminders-notifications'}><FaRegNewspaper/> Reminders And Notifications</Link>,
+        },
+        {
+          key: '8',
+          label: <Link to={'/user-management'}><FaRegNewspaper/> User Management</Link>,
         },
       ],
     },
@@ -340,8 +362,17 @@ const App = () => {
             <Route element={<ContactsPage />} path="/contact/info" />
             <Route element={<PartnersManagement />} path="/admin/partners" />
             <Route element={<CreateBlog />} path="/admin/blog"/>
-            
-            <Route element={<Users />} path="/users/list" />
+            <Route element={<Users />} path="/users/list"/>
+
+
+
+            <Route element={<Tenants />} path="/tenants" />
+            <Route element={<StallManagement/>} path="/stall-management" />
+            <Route element={<LeaseAgreements/>} path="/lease-agreements" />
+            <Route element={<Payments/>} path="/payments" />
+            <Route element={<MaintenanceRequests/>} path="/maintenance-requests"/>
+            <Route element={<RemindersAndNotifications/>} path="/reminders-notifications"/>
+            <Route element={<UserManagement/>} path="/user-management" />
             <Route element={<PageNotFound />} path="*" />
 
           </Routes>
