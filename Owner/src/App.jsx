@@ -31,12 +31,12 @@ import LeaseAgreements from './pages/Lease Agreements/LeaseAgreements ';
 import Payments from './pages/Payments/Payments';
 import MaintenanceRequests from './pages/Maintenance Requests/MaintenanceRequests';
 import RemindersAndNotifications from './pages/Reminder And Notification/RemindersAndNotifications';
-import UserManagement from './pages/User Management/UserManagement';
 import Termination from './pages/termination/Termination';
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiHomeOfficeLine } from "react-icons/ri";
-
-
+import { TbZoomMoney } from "react-icons/tb";
+import { GrHostMaintenance } from "react-icons/gr";
+import { IoNotifications } from "react-icons/io5";
 
 
 const {Header, Content, Sider} = Layout;
@@ -71,19 +71,15 @@ const App = () => {
         },
         {
           key: '5',
-          label: <Link to={'/payments'}><FaRegNewspaper/> Payments</Link>,
+          label: <Link to={'/payments'}><TbZoomMoney/> Payments</Link>,
         },
         {
           key: '6',
-          label: <Link to={'/maintenance-requests'}><FaRegNewspaper/> Maintenance Requests</Link>,
+          label: <Link to={'/maintenance-requests'}><GrHostMaintenance/> Maintenance Requests</Link>,
         },
         {
           key: '7',
-          label: <Link to={'/reminders-notifications'}><FaRegNewspaper/> Reminders And Notifications</Link>,
-        },
-        {
-          key: '8',
-          label: <Link to={'/user-management'}><FaRegNewspaper/> User Management</Link>,
+          label: <Link to={'/reminders-notifications'}><IoNotifications/> Reminders And Notifications</Link>,
         },
       ],
     },
@@ -379,7 +375,6 @@ const App = () => {
             <Route element={<Payments/>} path="/payments" />
             <Route element={<MaintenanceRequests/>} path="/maintenance-requests"/>
             <Route element={<RemindersAndNotifications/>} path="/reminders-notifications"/>
-            <Route element={<UserManagement/>} path="/user-management" />
             <Route element={<Termination/>} path="/termination" />
             <Route element={<PageNotFound />} path="*" />
 
