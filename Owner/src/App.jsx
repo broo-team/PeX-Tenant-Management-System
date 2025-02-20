@@ -33,6 +33,12 @@ import MaintenanceRequests from './pages/Maintenance Requests/MaintenanceRequest
 import RemindersAndNotifications from './pages/Reminder And Notification/RemindersAndNotifications';
 import UserManagement from './pages/User Management/UserManagement';
 import Termination from './pages/termination/Termination';
+import { FaPeopleRoof } from "react-icons/fa6";
+import { RiHomeOfficeLine } from "react-icons/ri";
+
+
+
+
 const {Header, Content, Sider} = Layout;
 
 const App = () => {
@@ -53,11 +59,11 @@ const App = () => {
       children: [
         {
           key: '1',
-          label: <Link to={'/tenants'}><MdContacts/> Tenants</Link>,
+          label: <Link to={'/tenants'}><FaPeopleRoof/> Tenants</Link>,
         },
         {
           key: '3',
-          label: <Link to={'/stall-management'}><FaPeopleLine/> Stall Management</Link>,
+          label: <Link to={'/stall-management'}><RiHomeOfficeLine/> Stall Management</Link>,
         },
         {
           key: '4',
