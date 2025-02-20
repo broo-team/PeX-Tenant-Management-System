@@ -31,6 +31,7 @@ import LeaseAgreements from './pages/Lease Agreements/LeaseAgreements ';
 import Payments from './pages/Payments/Payments';
 import MaintenanceRequests from './pages/Maintenance Requests/MaintenanceRequests';
 import RemindersAndNotifications from './pages/Reminder And Notification/RemindersAndNotifications';
+import logo from "./assets/imgs/logo.png"
 import Termination from './pages/termination/Termination';
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiHomeOfficeLine } from "react-icons/ri";
@@ -263,7 +264,7 @@ const App = () => {
             flexDirection: 'column',
           }}
         >
-          <img src="https://th.bing.com/th/id/OIP.rbrFuf821BNE8w_VnVvoUwHaD4?w=320&h=180&c=7&r=0&o=5&pid=1.7" alt='logo' style={{width:"auto",height:'100%',objectFit:'contain'}}/>
+          <img src={logo} alt='logo' style={{width:"auto",height:'100%',objectFit:'contain'}}/>
         </div>
         <Menu
             openKeys={stateOpenKeys}
