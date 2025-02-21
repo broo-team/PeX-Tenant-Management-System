@@ -177,6 +177,9 @@ const Tenants = () => {
               <Option value="Pending">b568</Option>
             </Select>
           </Form.Item>
+          <Form.Item name="eeuPayment" label="EEU Payment"> <Input /> </Form.Item>
+          <Form.Item name="generatorPayment" label="Generator Payment"> <Input /> </Form.Item>
+          <Form.Item name="waterPayment" label="Water Payment"> <Input /> </Form.Item>
             <Form.Item name="leasePeriod" label="Lease Period" rules={[{ required: true, message: "Please select Lease Period" }]}>
               <RangePicker style={{ width: "100%" }} />
             </Form.Item>
