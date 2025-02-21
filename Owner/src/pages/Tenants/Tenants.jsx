@@ -210,7 +210,7 @@ const Tenants = () => {
 
           {/* Show Extra Fields if Registered by Agent */}
           {isAgentRegistered && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
               <Form.Item name="authenticationNo" label="Agent No." rules={[{ required: true, message: "Please enter Authentication No." }]}>
                 <Input />
               </Form.Item>
