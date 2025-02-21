@@ -38,6 +38,7 @@ import { RiHomeOfficeLine } from "react-icons/ri";
 import { TbZoomMoney } from "react-icons/tb";
 import { GrHostMaintenance } from "react-icons/gr";
 import { IoNotifications } from "react-icons/io5";
+import { LuUtilityPole } from "react-icons/lu";
 
 
 const {Header, Content, Sider} = Layout;
@@ -82,6 +83,13 @@ const App = () => {
           key: '7',
           label: <Link to={'/reminders-notifications'}><IoNotifications/> Reminders And Notifications</Link>,
         },
+      //   <div style={{ marginTop: "auto" }}>
+      //   <Menu theme="dark" mode="inline">
+      //     <Menu.Item key="/utility" icon={<FaUserShield size={20} />}>
+      //       <Link to="/utility/list">Utility</Link>
+      //     </Menu.Item>
+      //   </Menu>
+      // </div>
       ],
     },
    
@@ -91,6 +99,7 @@ const App = () => {
       label:<Link to={'/users/list'}>Users</Link>,
       icon: <FaUserShield size={20} />,
     },
+    
   ];
 
   

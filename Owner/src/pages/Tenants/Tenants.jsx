@@ -1,13 +1,32 @@
 import React, { useState } from "react";
-import { Table, Button, Modal, Form, Input, Checkbox, message } from "antd";
+import { Table, Button, Modal, Form, Input, Checkbox, DatePicker, message, Select } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
+
+
+const paymentTerms = [
+  { value: '1 month', label: '1 month' },
+  { value: '2 months', label: '2 months' },
+  { value: '3 months', label: '3 months' },
+  { value: '6 months', label: '6 months' },
+  { value: '12 months', label: '12 months' },
+  { value: '1 year', label: '1 year' },
+  { value: '2 years', label: '2 years' },
+  { value: '3 years', label: '3 years' },
+  { value: '5 years', label: '5 years' },
+];
+
+
+
 
 const Tenants = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAgentRegistered, setIsAgentRegistered] = useState(false);
   const [form] = Form.useForm();
-  
+
   // Active Tenants List
   const [tenants, setTenants] = useState([
     {
@@ -18,6 +37,8 @@ const Tenants = () => {
       phone: "0923797665",
       room: "105/12",
       price: "8000",
+      leaseStart: "2024-01-01",
+      leaseEnd: "2025-01-01",
       registeredByAgent: false,
     },
   ]);
@@ -34,10 +55,19 @@ const Tenants = () => {
   const handleOk = () => {
     form.validateFields()
       .then((values) => {
-        setTenants([...tenants, { key: tenants.length + 1, ...values }]);
+        const { leasePeriod, ...rest } = values;
+        const newTenant = {
+          key: Date.now().toString(),
+          leaseStart: leasePeriod[0].format("YYYY-MM-DD"),
+          leaseEnd: leasePeriod[1].format("YYYY-MM-DD"),
+          ...rest,
+          registeredByAgent: isAgentRegistered,
+        };
+        setTenants([...tenants, newTenant]);
         form.resetFields();
         setIsModalVisible(false);
         setIsAgentRegistered(false);
+        message.success("Tenant added successfully!");
       })
       .catch((error) => console.log("Validation Failed:", error));
   };
@@ -51,8 +81,8 @@ const Tenants = () => {
 
   // Handle Tenant Termination
   const handleTerminate = (record) => {
-    setTerminatedTenants([...terminatedTenants, record]); // Move to terminated list
-    setTenants(tenants.filter((tenant) => tenant.key !== record.key)); // Remove from active list
+    setTerminatedTenants([...terminatedTenants, record]);
+    setTenants(tenants.filter((tenant) => tenant.key !== record.key));
     message.warning(`${record.fullName} has been terminated.`);
   };
 
@@ -63,7 +93,13 @@ const Tenants = () => {
     { title: "Sex", dataIndex: "sex", key: "sex" },
     { title: "Phone", dataIndex: "phone", key: "phone" },
     { title: "Room", dataIndex: "room", key: "room" },
-    { title: "Price", dataIndex: "price", key: "price" },
+    { title: "Rent Price", dataIndex: "price", key: "price" },
+    {
+      title: "Lease Period",
+      dataIndex: "leasePeriod",
+      key: "leasePeriod",
+      render: (_, record) => `${dayjs(record.leaseStart).format("YYYY-MM-DD")} to ${dayjs(record.leaseEnd).format("YYYY-MM-DD")}`,
+    },
     {
       title: "Registered by Agent",
       dataIndex: "registeredByAgent",
@@ -76,16 +112,14 @@ const Tenants = () => {
       render: (_, record) => (
         <>
           <Button type="link" icon={<EditOutlined />} />
-          <Link to={"/termination"}><Button  type="link" icon={"termination"} danger onClick={() => handleTerminate(record)} /></Link>
-          
+          <Button type="link" icon={<DeleteOutlined />} danger onClick={() => handleTerminate(record)} />
         </>
       ),
     },
   ];
 
   // Terminated Tenants Table Columns
-  const terminatedColumns = [...columns].map((col) => ({ ...col })); // Copy columns
-  terminatedColumns.pop(); // Remove the "Actions" column for terminated tenants
+  const terminatedColumns = columns.filter(col => col.key !== "actions");
 
   return (
     <div>
@@ -105,25 +139,61 @@ const Tenants = () => {
       )}
 
       {/* Add Tenant Modal */}
-      <Modal title="Add New Tenant" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Add New Tenant" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Form form={form} layout="vertical">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
             <Form.Item name="tenantID" label="Tenant ID" rules={[{ required: true, message: "Please enter Tenant ID" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="fullName" label="Full Name" rules={[{ required: true }]}>
+            <Form.Item name="fullName" label="Full Name" rules={[{ required: true, message: "Please enter Full Name" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="sex" label="Sex" rules={[{ required: true }]}>
+            <Form.Item name="sex" label="Sex" rules={[{ required: true, message: "Please enter Sex" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="phone" label="Phone Number" rules={[{ required: true }]}>
+            <Form.Item name="phone" label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="room" label="Room" rules={[{ required: true }]}>
+            <Form.Item name="City" label="city" rules={[{ required: true, message: "Please enter the name of Tenant City" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="price" label="Price">
+            <Form.Item name="subcity" label="Sub city" rules={[{ required: true, message: "Please enter subcity" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="woreda" label="Woreda" rules={[{ required: true, message: "Please enter Woreda" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="House No" label="House No" rules={[{ required: true, message: "Please enter the Tenant House Number" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item
+            name="room"
+            label="room/stall"
+            rules={[{ required: true, message: 'Please select the room' }]}
+          >
+            <Select>
+              <Option value="Active">b658</Option>
+              <Option value="Expired">b69</Option>
+              <Option value="Pending">b568</Option>
+            </Select>
+          </Form.Item>
+            <Form.Item name="leasePeriod" label="Lease Period" rules={[{ required: true, message: "Please select Lease Period" }]}>
+              <RangePicker style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item
+      name="paymentTerm"
+      label="Payment Term"
+      rules={[{ required: true, message: 'Please select the term of payment' }]}
+    >
+      <Select>
+        {paymentTerms.map((term) => (
+          <Option key={term.value} value={term.value}>
+            {term.label}
+          </Option>
+        ))}
+      </Select>
+    </Form.Item>
+            <Form.Item name="deposit" label="deposit(optinal)">
               <Input />
             </Form.Item>
           </div>
@@ -138,18 +208,30 @@ const Tenants = () => {
           {/* Show Extra Fields if Registered by Agent */}
           {isAgentRegistered && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
-              <Form.Item name="authenticationNo" label="Authentication No." rules={[{ required: true }]}>
+              <Form.Item name="authenticationNo" label="Agent No." rules={[{ required: true, message: "Please enter Authentication No." }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="date" label="Date" rules={[{ required: true }]}>
-                <Input type="date" />
-              </Form.Item>
-              <Form.Item name="agentFirstName" label="Agent First Name" rules={[{ required: true }]}>
+              <Form.Item name="agentFirstName" label="Agent Full Name" rules={[{ required: true, message: "Please enter Agent First Name" }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="agentLastName" label="Agent Last Name" rules={[{ required: true }]}>
-                <Input />
-              </Form.Item>
+              <Form.Item name="sex" label="Sex" rules={[{ required: true, message: "Please enter Sex" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="phone" label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="City" label="city" rules={[{ required: true, message: "Please enter the name of Tenant City" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="subcity" label="Sub city" rules={[{ required: true, message: "Please enter subcity" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="woreda" label="Woreda" rules={[{ required: true, message: "Please enter Woreda" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="House No" label="House No" rules={[{ required: true, message: "Please enter the Tenant House Number" }]}>
+              <Input />
+            </Form.Item>
             </div>
           )}
         </Form>
