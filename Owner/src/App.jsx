@@ -39,6 +39,7 @@ import { TbZoomMoney } from "react-icons/tb";
 import { GrHostMaintenance } from "react-icons/gr";
 import { IoNotifications } from "react-icons/io5";
 import { LuUtilityPole } from "react-icons/lu";
+import Utility from './pages/Utility/Utility';
 
 
 const {Header, Content, Sider} = Layout;
@@ -83,13 +84,6 @@ const App = () => {
           key: '7',
           label: <Link to={'/reminders-notifications'}><IoNotifications/> Reminders And Notifications</Link>,
         },
-      //   <div style={{ marginTop: "auto" }}>
-      //   <Menu theme="dark" mode="inline">
-      //     <Menu.Item key="/utility" icon={<FaUserShield size={20} />}>
-      //       <Link to="/utility/list">Utility</Link>
-      //     </Menu.Item>
-      //   </Menu>
-      // </div>
       ],
     },
    
@@ -283,7 +277,14 @@ const App = () => {
             mode="inline"
             items={items}
           />
-          <div style={{height:'40px'}}></div>
+          <div style={{height:'80px'}}></div>
+          <div style={{ marginTop: "auto" }}>
+        <Menu>
+          <Menu.Item key="/utility" icon={<LuUtilityPole size={20} />}>
+            <Link to="/utility/list">Utility</Link>
+          </Menu.Item>
+        </Menu>
+      </div>
       </Sider>
       <Layout>
         <Header
@@ -386,6 +387,7 @@ const App = () => {
             <Route element={<MaintenanceRequests/>} path="/maintenance-requests"/>
             <Route element={<RemindersAndNotifications/>} path="/reminders-notifications"/>
             <Route element={<Termination/>} path="/termination" />
+            <Route element={<Utility/>} path="/utility/list" />
             <Route element={<PageNotFound />} path="*" />
 
           </Routes>
