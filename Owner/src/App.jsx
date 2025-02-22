@@ -13,18 +13,13 @@ import { IoNotificationsCircle, IoSettingsOutline} from 'react-icons/io5';
 
 import NewUserForm from './components/forms/users/NewUserForm';
 import ModalForm from './modal/Modal';
-import NewMessageForm from './components/forms/users/NewMessageForm';
+// import NewMessageForm from './components/forms/users/NewMessageForm';
 import ChangePasswordForm from './components/forms/users/ChangePasswordForm';
 import { BACKENDURL } from './helper/Urls';
 import axios from 'axios';
-import PartnersManagement from './pages/vacancy/AwardAndPartner/PartnersManagement';
-import CreateBlog from './pages/vacancy/Blog/CreateBlog';
 import { MdAdminPanelSettings } from "react-icons/md";
-import { MdContacts } from "react-icons/md";
-import { FaPeopleLine } from "react-icons/fa6";
 import { FaRegNewspaper } from "react-icons/fa6";
 import { RxDashboard } from "react-icons/rx";
-import ContactsPage from './pages/vacancy/interview/ContactsPage';
 import Tenants from './pages/Tenants/Tenants';
 import StallManagement from './pages/Stall Management/StallManagement';
 import LeaseAgreements from './pages/Lease Agreements/LeaseAgreements ';
@@ -373,9 +368,6 @@ const App = () => {
             <Routes>
             <Route element={<Auth />} path="/" />
             <Route element={<Dashboard />} path="/dashboard" />
-            <Route element={<ContactsPage />} path="/contact/info" />
-            <Route element={<PartnersManagement />} path="/admin/partners" />
-            <Route element={<CreateBlog />} path="/admin/blog"/>
             <Route element={<Users />} path="/users/list"/>
             <Route element={<Tenants />} path="/tenants" />
             <Route element={<StallManagement/>} path="/stall-management" />
