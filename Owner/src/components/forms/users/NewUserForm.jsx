@@ -81,7 +81,7 @@ const NewUserForm = ({openModalFun, reload}) => {
           rules={[
             {
               required: true,
-              message: 'Please input Username',
+              message: 'Please input phone number',
             },
           ]}
           name="userName"
@@ -91,12 +91,12 @@ const NewUserForm = ({openModalFun, reload}) => {
 
         <Form.Item
           style={{margin: '5px 0', width: '59%'}}
-          label="Email"
+          label="password"
           rules={[
             {
               required: true,
               type:'email',
-              message: 'Please input Email!',
+              message: 'Please input password!',
             },
           ]}
           name="email"
@@ -104,7 +104,7 @@ const NewUserForm = ({openModalFun, reload}) => {
           <Input/>
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           style={{margin: '5px 0', width: '100%'}}
           label="Tasks"
           rules={[
@@ -114,8 +114,8 @@ const NewUserForm = ({openModalFun, reload}) => {
             },
           ]}
           name="tasks"
-        >
-          <Select
+        > */}
+          {/* <Select
             showSearch
             mode='multiple'
             maxTagCount='responsive'
@@ -199,30 +199,10 @@ const NewUserForm = ({openModalFun, reload}) => {
                 label: 'Write',
               },
             ]}
-          />
-        </Form.Item>
+          /> */}
+        {/* </Form.Item> */}
         
-        <Form.Item
-          style={{margin: '5px 0', width: '49%'}}
-          label="Effective Till"
-          name="effectiveTill"
-        >
-          <DatePicker style={{width:'100%'}}/>
-        </Form.Item>
-
-        <Form.Item
-          style={{margin: '5px 0', width: '100%'}}
-          label="Link to Employee"
-          name="employee"
-        >
-          <Select
-            placeholder="Search to Select"
-            onChange={(e)=>setemployeeId(e)}
-            options={employeeOptions}
-            loading={loadingEmployee}
-            disabled={loadingEmployee}
-          />
-        </Form.Item>
+        
       </div>
       <Form.Item
         style={{display: 'flex', justifyContent: 'center', marginTop: '15px'}}

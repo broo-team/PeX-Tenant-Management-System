@@ -377,9 +377,6 @@ const App = () => {
             <Route element={<PartnersManagement />} path="/admin/partners" />
             <Route element={<CreateBlog />} path="/admin/blog"/>
             <Route element={<Users />} path="/users/list"/>
-
-
-
             <Route element={<Tenants />} path="/tenants" />
             <Route element={<StallManagement/>} path="/stall-management" />
             <Route element={<LeaseAgreements/>} path="/lease-agreements" />
