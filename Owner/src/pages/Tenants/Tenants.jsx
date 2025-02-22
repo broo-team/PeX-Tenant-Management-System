@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
-
 const paymentTerms = [
   { value: '1 month', label: '1 month' },
   { value: '2 months', label: '2 months' },
@@ -19,13 +18,15 @@ const paymentTerms = [
   { value: '5 years', label: '5 years' },
 ];
 
-
-
-
 const Tenants = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAgentRegistered, setIsAgentRegistered] = useState(false);
   const [form] = Form.useForm();
+
+  // State for additional payment checkboxes
+  const [eeuPayment, setEeuPayment] = useState(false);
+  const [generatorPayment, setGeneratorPayment] = useState(false);
+  const [waterPayment, setWaterPayment] = useState(false);
 
   // Active Tenants List
   const [tenants, setTenants] = useState([
@@ -40,6 +41,9 @@ const Tenants = () => {
       leaseStart: "2024-01-01",
       leaseEnd: "2025-01-01",
       registeredByAgent: false,
+      eeuPayment: false,
+      generatorPayment: false,
+      waterPayment: false,
     },
   ]);
 
@@ -62,11 +66,17 @@ const Tenants = () => {
           leaseEnd: leasePeriod[1].format("YYYY-MM-DD"),
           ...rest,
           registeredByAgent: isAgentRegistered,
+          eeuPayment,
+          generatorPayment,
+          waterPayment,
         };
         setTenants([...tenants, newTenant]);
         form.resetFields();
         setIsModalVisible(false);
         setIsAgentRegistered(false);
+        setEeuPayment(false);
+        setGeneratorPayment(false);
+        setWaterPayment(false);
         message.success("Tenant added successfully!");
       })
       .catch((error) => console.log("Validation Failed:", error));
@@ -77,6 +87,9 @@ const Tenants = () => {
     setIsModalVisible(false);
     form.resetFields();
     setIsAgentRegistered(false);
+    setEeuPayment(false);
+    setGeneratorPayment(false);
+    setWaterPayment(false);
   };
 
   // Handle Tenant Termination
@@ -141,7 +154,7 @@ const Tenants = () => {
       {/* Add Tenant Modal */}
       <Modal title="Add New Tenant" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Form form={form} layout="vertical">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
             <Form.Item name="tenantID" label="Tenant ID" rules={[{ required: true, message: "Please enter Tenant ID" }]}>
               <Input />
             </Form.Item>
@@ -166,20 +179,18 @@ const Tenants = () => {
             <Form.Item name="House No" label="House No" rules={[{ required: true, message: "Please enter the Tenant House Number" }]}>
               <Input />
             </Form.Item>
+            
             <Form.Item
-            name="room"
-            label="room/stall"
-            rules={[{ required: true, message: 'Please select the room' }]}
-          >
-            <Select>
-              <Option value="Active">b658</Option>
-              <Option value="Expired">b69</Option>
-              <Option value="Pending">b568</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="eeuPayment" label="EEU Payment"> <Input /> </Form.Item>
-          <Form.Item name="generatorPayment" label="Generator Payment"> <Input /> </Form.Item>
-          <Form.Item name="waterPayment" label="Water Payment"> <Input /> </Form.Item>
+  name="room"
+  label="room/stall"
+  rules={[{ required: true, message: 'Please select the room' }]}
+>
+  <Select>
+    <Option value="b658">b658</Option>
+    <Option value="b69">b69</Option>
+    <Option value="b568">b568</Option>
+  </Select>
+</Form.Item>
             <Form.Item name="leasePeriod" label="Lease Period" rules={[{ required: true, message: "Please select Lease Period" }]}>
               <RangePicker style={{ width: "100%" }} />
             </Form.Item>
@@ -210,33 +221,46 @@ const Tenants = () => {
 
           {/* Show Extra Fields if Registered by Agent */}
           {isAgentRegistered && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
-              <Form.Item name="authenticationNo" label="Agent No." rules={[{ required: true, message: "Please enter Authentication No." }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="agentFirstName" label="Agent Full Name" rules={[{ required: true, message: "Please enter Agent First Name" }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="sex" label="Sex" rules={[{ required: true, message: "Please enter Sex" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="phone" label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="City" label="city" rules={[{ required: true, message: "Please enter the name of Tenant City" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="subcity" label="Sub city" rules={[{ required: true, message: "Please enter subcity" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="woreda" label="Woreda" rules={[{ required: true, message: "Please enter Woreda" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="House No" label="House No" rules={[{ required: true, message: "Please enter the Tenant House Number" }]}>
-              <Input />
-            </Form.Item>
-            </div>
+             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+             <Form.Item name="authenticationNo" label="Agent No." rules={[{ required: true, message: "Please enter Authentication No." }]}>
+               <Input />
+             </Form.Item>
+             <Form.Item name="agentFirstName" label="Agent Full Name" rules={[{ required: true, message: "Please enter Agent First Name" }]}>
+               <Input />
+             </Form.Item>
+             <Form.Item name="sex" label="Sex" rules={[{ required: true, message: "Please enter Sex" }]}>
+             <Input />
+           </Form.Item>
+           <Form.Item name="phone" label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+             <Input />
+           </Form.Item>
+           <Form.Item name="City" label="city" rules={[{ required: true, message: "Please enter the name of Tenant City" }]}>
+             <Input />
+           </Form.Item>
+           <Form.Item name="subcity" label="Sub city" rules={[{ required: true, message: "Please enter subcity" }]}>
+             <Input />
+           </Form.Item>
+           <Form.Item name="woreda" label="Woreda" rules={[{ required: true, message: "Please enter Woreda" }]}>
+             <Input />
+           </Form.Item>
+           <Form.Item name="House No" label="House No" rules={[{ required: true, message: "Please enter the Tenant House Number" }]}>
+             <Input />
+           </Form.Item>
+           </div>
           )}
+
+          {/* Additional Payment Checkboxes */}
+          <Form.Item>
+            <Checkbox checked={eeuPayment} onChange={(e) => setEeuPayment(e.target.checked)}>
+              EEU Payment
+            </Checkbox>
+            <Checkbox checked={generatorPayment} onChange={(e) => setGeneratorPayment(e.target.checked)}>
+              Generator Payment
+            </Checkbox>
+            <Checkbox checked={waterPayment} onChange={(e) => setWaterPayment(e.target.checked)}>
+              Water Payment
+            </Checkbox>
+          </Form.Item>
         </Form>
       </Modal>
     </div>
