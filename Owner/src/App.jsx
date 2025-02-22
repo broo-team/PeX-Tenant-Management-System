@@ -322,14 +322,14 @@ const App = () => {
             </Breadcrumb>
           </div>
 
-          {/* <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-          <Tooltip title='Write Message'>
+          <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+          {/* <Tooltip title='Write Message'>
           <MdMessage onClick={() => {
             setOpenValue (true);
             setOpenContent (<NewMessageForm openModalFun={(e)=>setOpenValue(e)}/>);
             setTitle ('Message');
           }} size={25} cursor={'pointer'} />
-          </Tooltip>
+          </Tooltip> */}
           <Dropdown
           visible={visible}
           onVisibleChange={v=>setVisible(v)}
@@ -342,7 +342,7 @@ const App = () => {
               <Badge size="small" count={0}>
                 <IoNotificationsCircle size={26} cursor={'pointer'} />
                 {/* <IoNotificationsCircle size={26} onClick={()=>play()} cursor={'pointer'} /> */}
-              {/* </Badge>
+              </Badge>
             </Dropdown>
             <Dropdown
               menu={{
@@ -353,7 +353,7 @@ const App = () => {
             >
               <IoSettingsOutline size={22} cursor={'pointer'} />
             </Dropdown>
-          </div> */} 
+          </div>
 
         </Header>
         <Content
