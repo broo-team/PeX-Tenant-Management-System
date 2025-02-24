@@ -2,26 +2,19 @@ import React, { useState } from "react";
 import { Table, Button, Modal, Form, Input, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-// Utility rates based on Ethiopian electric rules
-const electricityRates = [
-  { limit: 100, rate: 1 }, // First 100 kWh at 1 Birr/kWh
-  { limit: 300, rate: 2 }, // Next 200 kWh at 2 Birr/kWh
-  { limit: Infinity, rate: 3 }, // Above 300 kWh at 3 Birr/kWh
-];
-
 const Utility = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  
+  const [electricityRate, setElectricityRate] = useState(2.5); // Configurable electricity rate
+  const [waterRate, setWaterRate] = useState(5); // Configurable water rate
+  const [generatorRate, setGeneratorRate] = useState(10); // Configurable generator rate
+
   const [utilities, setUtilities] = useState([
     {
       key: "1",
-      tenantID: "TT001",
-      initialReading: 1000,
-      currentReading: 1000101,
-      waterUsage: 300, // in liters
-      rentPrice: 8000, // Tenant's rent price
-      date: "2025-02-21",
+      electricityRate: 2.5,
+      waterRate: 5,
+      generatorRate: 10,
     },
   ]);
 
@@ -32,38 +25,18 @@ const Utility = () => {
 
   // Handle Form Submission
   const handleOk = () => {
-    form.validateFields()
+    form
+      .validateFields()
       .then((values) => {
-        // Calculate electricity usage
-        const electricityUsage = values.currentReading - values.initialReading;
-        
-        // Calculate electricity cost based on Ethiopian rates
-        let electricityCost = 0;
-        let remainingUsage = electricityUsage;
-        
-        for (let i = 0; i < electricityRates.length; i++) {
-          const { limit, rate } = electricityRates[i];
-          const usageInSlab = Math.min(remainingUsage, limit);
-          electricityCost += usageInSlab * rate;
-          remainingUsage -= usageInSlab;
-          if (remainingUsage <= 0) break;
-        }
-
-        // Calculate water cost
-        const waterCost = values.waterUsage * 5; // Example: 5 Birr per liter
-
-        // Calculate total payment (rent + utilities)
-        const totalPayment = parseFloat(values.rentPrice) + electricityCost + waterCost;
-
-        // Add new utility record
-        setUtilities([...utilities, {
+        // Add or update the utility record
+        const updatedUtility = {
           key: utilities.length + 1,
-          ...values,
-          electricityUsage,
-          electricityCost,
-          waterCost,
-          totalPayment,
-        }]);
+          electricityRate: values.electricityRate,
+          waterRate: values.waterRate,
+          generatorRate: values.generatorRate,
+        };
+
+        setUtilities((prevUtilities) => [...prevUtilities, updatedUtility]);
         form.resetFields();
         setIsModalVisible(false);
       })
@@ -78,76 +51,86 @@ const Utility = () => {
 
   // Utility Table Columns
   const columns = [
-    { title: "Tenant ID", dataIndex: "tenantID", key: "tenantID" },
-    { title: "Initial Reading", dataIndex: "initialReading", key: "initialReading" },
-    { title: "Current Reading", dataIndex: "currentReading", key: "currentReading" },
-    { title: "Electricity Usage (kWh)", dataIndex: "electricityUsage", key: "electricityUsage" },
-    { title: "Water Usage (liters)", dataIndex: "waterUsage", key: "waterUsage" },
-    { title: "Rent Price", dataIndex: "rentPrice", key: "rentPrice" },
-    { title: "Electricity Cost", dataIndex: "electricityCost", key: "electricityCost" },
-    { title: "Water Cost", dataIndex: "waterCost", key: "waterCost" },
-    { title: "Total Payment", dataIndex: "totalPayment", key: "totalPayment" },
-    { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Electricity Rate (Birr/kWh)", dataIndex: "electricityRate", key: "electricityRate" },
+    { title: "Water Rate (Birr/liter)", dataIndex: "waterRate", key: "waterRate" },
+    { title: "Generator Rate (Birr/hour)", dataIndex: "generatorRate", key: "generatorRate" },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <span>
+          <Button
+            type="link"
+            onClick={() => handleEdit(record.key)}
+          >
+            Edit
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() => handleDelete(record.key)}
+          >
+            Delete
+          </Button>
+        </span>
+      ),
+    },
   ];
+
+  // Handle Edit Utility Record
+  const handleEdit = (key) => {
+    const selectedUtility = utilities.find((utility) => utility.key === key);
+    form.setFieldsValue({
+      electricityRate: selectedUtility.electricityRate,
+      waterRate: selectedUtility.waterRate,
+      generatorRate: selectedUtility.generatorRate,
+    });
+    setIsModalVisible(true);
+  };
+
+  // Handle Delete Utility Record
+  const handleDelete = (key) => {
+    setUtilities((prevUtilities) => prevUtilities.filter((utility) => utility.key !== key));
+    message.success("Utility record deleted");
+  };
 
   return (
     <div>
-      <h2>Utility Usage</h2>
+      <h2>Utility Rates</h2>
       <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-        Add Utility Usage
+        Add Utility Rate
       </Button>
 
       <Table columns={columns} dataSource={utilities} style={{ marginTop: 20 }} />
 
-      {/* Add Utility Modal */}
+      {/* Add/Edit Utility Modal */}
       <Modal
-        title="Add Utility Usage"
+        title="Add or Edit Utility Rate"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="tenantID"
-            label="Tenant ID"
-            rules={[{ required: true, message: "Please enter Tenant ID" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="initialReading"
-            label="Initial Meter Reading"
-            rules={[{ required: true, message: "Please enter initial reading" }]}
+            name="electricityRate"
+            label="Electricity Rate (Birr/kWh)"
+            rules={[{ required: true, message: "Please enter electricity rate" }]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
-            name="currentReading"
-            label="Current Meter Reading"
-            rules={[{ required: true, message: "Please enter current reading" }]}
+            name="waterRate"
+            label="Water Rate (Birr/liter)"
+            rules={[{ required: true, message: "Please enter water rate" }]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
-            name="waterUsage"
-            label="Water Usage (liters)"
-            rules={[{ required: true, message: "Please enter water usage" }]}
+            name="generatorRate"
+            label="Generator Rate (Birr/hour)"
+            rules={[{ required: true, message: "Please enter generator rate" }]}
           >
             <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="rentPrice"
-            label="Rent Price"
-            rules={[{ required: true, message: "Please enter rent price" }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="date"
-            label="Date"
-            rules={[{ required: true, message: "Please select the date" }]}
-          >
-            <Input type="date" />
           </Form.Item>
         </Form>
       </Modal>

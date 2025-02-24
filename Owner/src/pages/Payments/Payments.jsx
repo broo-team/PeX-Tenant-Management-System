@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, message, DatePicker, Input } from 'antd';
+import { Table, Button, Space, message, DatePicker, Input, Modal, Form, InputNumber } from 'antd';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, CheckCircleOutlined, CloudServerOutlined } from '@ant-design/icons';
 
 const Payments = () => {
   const [payments, setPayments] = useState([
-    { key: 1, tenantName: 'Sied Abdela', stallCode: 's101', paymentDate: '2024-02-15', amount: 500, status: 'Unpaid' },
-    { key: 2, tenantName: 'Brook tefera', stallCode: 'B202', paymentDate: '2024-02-20', amount: 700, status: 'Paid' },
+    { key: 1, tenantName: 'Sied Abdela', stallCode: 's101', paymentDate: '2024-02-15', paymentTerm: 'Monthly', amount: 500, status: 'Unpaid', 
+       paymentDuty: '2024-02-28',usesEEU: false},
+    { key: 2, tenantName: 'Brook Tefera', stallCode: 'B202', paymentDate: '2024-02-20', amount: 700, status: 'Paid', 
+      usesGenerator: false, usesEEU: true, usesWater: false, paymentTerm: 'Quarterly', paymentDuty: '2024-05-20' },
   ]);
   const [filteredPayments, setFilteredPayments] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [utilityFormData, setUtilityFormData] = useState({ generatorUsage: 0, eeuUsage: 0, waterUsage: 0 });
 
   const handleMarkAsPaid = (key) => {
     setPayments(payments.map(payment => 
@@ -27,14 +31,70 @@ const Payments = () => {
     setFilteredPayments(filtered.length > 0 ? filtered : payments);
   };
 
+  const handleUtilityChange = (field, value) => {
+    setUtilityFormData({ ...utilityFormData, [field]: value });
+  };
+
+  const handleUtilitySubmit = () => {
+    message.success('Utility usage recorded!');
+    setIsModalVisible(false);
+  };
+
   const columns = [
     { title: 'Tenant Name', dataIndex: 'tenantName', key: 'tenantName' },
     { title: 'Stall Code', dataIndex: 'stallCode', key: 'stallCode' },
-    { 
-      title: 'Payment Date', 
-      dataIndex: 'paymentDate', 
-      key: 'paymentDate',
-      render: date => dayjs(date).format('YYYY-MM-DD'),
+    {
+      title: 'Payment Term',
+      dataIndex: 'paymentTerm',
+      key: 'paymentTerm',
+      render: (term) => term,
+    },
+    {
+      title: 'Payment Duty',
+      dataIndex: 'paymentDuty',
+      key: 'paymentDuty',
+      render: (duty) => dayjs(duty).format('YYYY-MM-DD'),
+    },
+    {
+      title: 'Utility Section',
+      key: 'utilitySection',
+      render: (_, record) => (
+        <Space size="middle">
+          {record.usesGenerator && (
+            <Button
+              icon={<CloudServerOutlined />}
+              onClick={() => {
+                setSelectedPayment(record);
+                setIsModalVisible(true);
+              }}
+            >
+              Generator
+            </Button>
+          )}
+          {record.usesEEU && (
+            <Button
+              icon={<CheckCircleOutlined />}
+              onClick={() => {
+                setSelectedPayment(record);
+                setIsModalVisible(true);
+              }}
+            >
+              Utility
+            </Button>
+          )}
+          {record.usesWater && (
+            <Button
+              icon={"dropout"}
+              onClick={() => {
+                setSelectedPayment(record);
+                setIsModalVisible(true);
+              }}
+            >
+              Water
+            </Button>
+          )}
+        </Space>
+      ),
     },
     { title: 'Amount', dataIndex: 'amount', key: 'amount' },
     { title: 'Status', dataIndex: 'status', key: 'status' },
@@ -58,6 +118,37 @@ const Payments = () => {
         <DatePicker placeholder="Search by Payment Date" onChange={date => handleSearch({ paymentDate: date })} />
       </Space>
       <Table columns={columns} dataSource={filteredPayments.length > 0 ? filteredPayments : payments} />
+
+      <Modal
+        title="Enter Utility Usage"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={handleUtilitySubmit}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Generator Usage (hours)">
+            <InputNumber
+              value={utilityFormData.generatorUsage}
+              onChange={(value) => handleUtilityChange('generatorUsage', value)}
+              min={0}
+            />
+          </Form.Item>
+          <Form.Item label="EEU Usage (kWh)">
+            <InputNumber
+              value={utilityFormData.eeuUsage}
+              onChange={(value) => handleUtilityChange('eeuUsage', value)}
+              min={0}
+            />
+          </Form.Item>
+          <Form.Item label="Water Usage (cubic meters)">
+            <InputNumber
+              value={utilityFormData.waterUsage}
+              onChange={(value) => handleUtilityChange('waterUsage', value)}
+              min={0}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

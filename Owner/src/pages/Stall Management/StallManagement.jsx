@@ -48,7 +48,7 @@ const StallManagement = () => {
   const handleCreateStall = () => {
     setStallCodeInputs([{ id: 1, value: '' }]);
     setNewStallsList([]);
-    setIsStallModalVisible(true);
+    setIsStallModalVisible(true);  // Opens the modal for creating stalls
   };
 
   const handleEdit = (record) => {
@@ -129,10 +129,21 @@ const StallManagement = () => {
     setStallCodeInputs(updatedInputs);
   };
 
+  const handleEditNewStall = (stallCode) => {
+    const stallToEdit = newStallsList.find((stall) => stall.stallCode === stallCode);
+    setEditingStall(stallToEdit);
+    setIsStallModalVisible(true);
+  };
+
+  const handleDeleteNewStall = (stallCode) => {
+    setNewStallsList(newStallsList.filter((stall) => stall.stallCode !== stallCode));
+    message.success('Stall deleted successfully!');
+  };
+
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button type="default" onClick={handleCreateStall}>Create Stall</Button>
+        <Button type="default" onClick={handleCreateStall}>Create Stall</Button> {/* Change text here */}
         <Button type="primary" onClick={handleAddStall}>Add Room</Button>
       </Space>
 
@@ -150,8 +161,7 @@ const StallManagement = () => {
           <Form.Item
             name="stallCode"
             label="Stall Code"
-            rules={[{ required: true, message: 'Please select a stall!' }]}
-          >
+            rules={[{ required: true, message: 'Please select a stall!' }]}>
             <Select
               placeholder="Select a stall"
               onChange={(value) => {
@@ -186,7 +196,7 @@ const StallManagement = () => {
           </Form.Item>
 
           <Form.Item label="Room">
-          <InputNumber style={{ width: '100%' }} disabled={!selectedStall} />
+            <InputNumber style={{ width: '100%' }} disabled={!selectedStall} />
           </Form.Item>
         </Form>
       </Modal>
@@ -198,12 +208,9 @@ const StallManagement = () => {
         onOk={handleStallOk}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" onClick={handleCancel}>
-            Close
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleStallOk}>
-            Create Stalls
-          </Button>,
+          // <Button key="back" onClick={handleCancel}>
+          //   Close
+          // </Button>
         ]}
       >
         <Form form={stallForm} layout="vertical">
@@ -219,13 +226,10 @@ const StallManagement = () => {
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Button
-                  type="dashed"
-                  onClick={addStallCodeInput}
-                  style={{ marginTop: 30 }}
-                >
-                  + Add More
-                </Button>
+                
+                <Button style={{ marginTop: 30 }} key="submit" type="primary" onClick={handleStallOk}>
+            Create Stalls
+          </Button>
               </Col>
             </Row>
           ))}
@@ -239,6 +243,10 @@ const StallManagement = () => {
               renderItem={(item) => (
                 <List.Item>
                   {item.stallCode} - {item.size} - ${item.monthlyRent}
+                  <Space>
+                    <Button type="link" onClick={() => handleEditNewStall(item.stallCode)}>Edit</Button>
+                    <Button type="link" danger onClick={() => handleDeleteNewStall(item.stallCode)}>Delete</Button>
+                  </Space>
                 </List.Item>
               )}
             />
