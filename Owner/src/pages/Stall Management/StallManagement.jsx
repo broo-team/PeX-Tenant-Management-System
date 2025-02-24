@@ -127,7 +127,7 @@ const StallManagement = () => {
             <Col span={12}>
               <Form.Item
                 name="size"
-                label="Size"
+                label="Meter Square"
                 rules={[{ required: true, message: 'Please enter the size!' }]}
               >
                 <Input />
