@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, Space, message, Row, Col, Select } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, Space, message, Row, Col, Select, List } from 'antd';
 
 const StallManagement = () => {
   const initialStalls = [
@@ -16,7 +16,8 @@ const StallManagement = () => {
   const [rooms, setRooms] = useState(['']);
   const [editingStall, setEditingStall] = useState(null);
   const [selectedStall, setSelectedStall] = useState(null);
-  const [stallCodeInputs, setStallCodeInputs] = useState([{ id: 1, value: '' }]); // Dynamic stall code inputs
+  const [stallCodeInputs, setStallCodeInputs] = useState([{ id: 1, value: '' }]);
+  const [newStallsList, setNewStallsList] = useState([]);
 
   const columns = [
     { title: 'Stall Code', dataIndex: 'stallCode', key: 'stallCode' },
@@ -45,7 +46,8 @@ const StallManagement = () => {
   };
 
   const handleCreateStall = () => {
-    setStallCodeInputs([{ id: 1, value: '' }]); // Reset to one input
+    setStallCodeInputs([{ id: 1, value: '' }]);
+    setNewStallsList([]);
     setIsStallModalVisible(true);
   };
 
@@ -72,18 +74,19 @@ const StallManagement = () => {
 
     const newStalls = stallCodes.map((code) => ({
       stallCode: code,
-      size: '10x10', // Default size, can be customized
-      monthlyRent: 500, // Default rent, can be customized
-      eeuReader: 'E000', // Default EEU reader, can be customized
-      rooms: [], // Initialize with empty rooms
+      size: '10x10',
+      monthlyRent: 500,
+      eeuReader: 'E000',
+      rooms: [],
     }));
 
+    setNewStallsList(newStalls);
     setStalls([...stalls, ...newStalls]);
     message.success(`${stallCodes.length} new stalls created successfully!`);
-    setIsStallModalVisible(false);
+    setStallCodeInputs([{ id: 1, value: '' }]);
   };
 
-  const handleAddOk = () => {
+  const handleAddSave = () => {
     form.validateFields().then((values) => {
       const updatedData = { ...values, rooms };
       if (editingStall) {
@@ -93,7 +96,10 @@ const StallManagement = () => {
         setStalls([...stalls, { ...updatedData, key: Date.now() }]);
         message.success('Stall added successfully!');
       }
-      setIsModalVisible(false);
+      form.resetFields();
+      setRooms(['']);
+      setEditingStall(null);
+      setSelectedStall(null);
     });
   };
 
@@ -126,8 +132,8 @@ const StallManagement = () => {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={handleAddStall}>Add Stall</Button>
         <Button type="default" onClick={handleCreateStall}>Create Stall</Button>
+        <Button type="primary" onClick={handleAddStall}>Add Room</Button>
       </Space>
 
       <Table columns={columns} dataSource={stalls} rowKey="stallCode" />
@@ -136,8 +142,9 @@ const StallManagement = () => {
       <Modal
         title={editingStall ? 'Edit Stall' : 'Add Stall'}
         visible={isModalVisible}
-        onOk={handleAddOk}
+        onOk={handleAddSave}
         onCancel={handleCancel}
+        okText="Save"
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -178,21 +185,8 @@ const StallManagement = () => {
             <Input disabled={!selectedStall} />
           </Form.Item>
 
-          {/* Dynamic Room Inputs */}
-          <Form.Item label="Rooms">
-            {rooms.map((room, index) => (
-              <Input
-                key={index}
-                value={room}
-                onChange={(e) => handleRoomChange(e.target.value, index)}
-                placeholder="Enter room number"
-                style={{ marginBottom: 8 }}
-                disabled={!selectedStall}
-              />
-            ))}
-            <Button type="dashed" onClick={addRoom} block disabled={!selectedStall}>
-              + Add Room
-            </Button>
+          <Form.Item label="Room">
+          <InputNumber style={{ width: '100%' }} disabled={!selectedStall} />
           </Form.Item>
         </Form>
       </Modal>
@@ -203,24 +197,53 @@ const StallManagement = () => {
         visible={isStallModalVisible}
         onOk={handleStallOk}
         onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Close
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleStallOk}>
+            Create Stalls
+          </Button>,
+        ]}
       >
         <Form form={stallForm} layout="vertical">
           {stallCodeInputs.map((input) => (
-            <Form.Item
-              key={input.id}
-              label={`Stall Code`}
-            >
-              <Input
-                value={input.value}
-                onChange={(e) => handleStallCodeChange(e, input.id)}
-                placeholder="Enter stall code"
-              />
-            </Form.Item>
+            <Row gutter={16} key={input.id}>
+              <Col span={18}>
+                <Form.Item label={`Stall Code`}>
+                  <Input
+                    value={input.value}
+                    onChange={(e) => handleStallCodeChange(e, input.id)}
+                    placeholder="Enter stall code"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Button
+                  type="dashed"
+                  onClick={addStallCodeInput}
+                  style={{ marginTop: 30 }}
+                >
+                  + Add More
+                </Button>
+              </Col>
+            </Row>
           ))}
-          <Button type="dashed" onClick={addStallCodeInput} block>
-            + Add More Stall Codes
-          </Button>
         </Form>
+        
+        {newStallsList.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <h4>Newly Created Stalls:</h4>
+            <List
+              dataSource={newStallsList}
+              renderItem={(item) => (
+                <List.Item>
+                  {item.stallCode} - {item.size} - ${item.monthlyRent}
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
       </Modal>
     </div>
   );
