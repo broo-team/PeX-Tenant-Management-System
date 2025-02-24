@@ -264,17 +264,17 @@ const Tenants = () => {
               <Form.Item name="leasePeriod" label="Lease Period" rules={[{ required: true, message: "Please select Lease Period" }]}>
                 <RangePicker style={{ width: "100%" }} />
               </Form.Item>
-
+              <div style={{margin:"10px"}}>Utilitys</div>
               {/* Additional Payment Checkboxes */}
               <Form.Item>
                 <Checkbox checked={eeuPayment} onChange={(e) => setEeuPayment(e.target.checked)}>
-                  EEU Payment
+                  EEU
                 </Checkbox>
                 <Checkbox checked={generatorPayment} onChange={(e) => setGeneratorPayment(e.target.checked)}>
-                  Generator Payment
+                  Generator
                 </Checkbox>
                 <Checkbox checked={waterPayment} onChange={(e) => setWaterPayment(e.target.checked)}>
-                  Water Payment
+                  Water
                 </Checkbox>
               </Form.Item>
             </TabPane>
