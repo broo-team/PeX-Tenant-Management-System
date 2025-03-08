@@ -1,73 +1,90 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Spin } from 'antd';
+import { MdOutlineBedroomParent, MdOutlineMedicalServices} from "react-icons/md";
+import { FaPeopleRoof } from "react-icons/fa6";
+import { GiFlood } from "react-icons/gi";
+import { GrHostMaintenance } from "react-icons/gr";
+import { RiIndeterminateCircleFill } from "react-icons/ri";
 import { BACKENDURL } from '../helper/Urls';
-import { MdContacts } from "react-icons/md";
-import { MdOutlineMedicalServices } from "react-icons/md";
-import { FaPeopleLine } from "react-icons/fa6";
-import { FaRegNewspaper } from "react-icons/fa6";
-const Dashboard = () => {;
-  const [contact, SetContact] = useState(null);
-  const [service, Setservice] = useState(null);
-  const [news, SetNews] = useState(null);;
-  const [award, setAward] =useState(null);
 
-  // Fetch the counts from APIs (replace with your actual API calls)
+const Dashboard = () => {
+  const [tenant, setTenant] = useState(null);
+  const [stallcode, setStallCode] = useState(null);
+  const [room, setRoom] = useState(null);
+  const [terminatedTenants, setTerminatedTenants] = useState(null);
+  const [utilityUsage, setUtilityUsage] = useState(null);
+  const [maintenance,Setmaintenance] = useState(null)
+
   useEffect(() => {
-    // Fetch employee count
-    fetch(`${BACKENDURL}/api/get/contacts`) // Replace with actual API endpoint
+    fetch(`http://localhost:5000/api/tenants`)
       .then((response) => response.json())
-      .then((data) => SetContact(data.length)
-      )
-      .catch(() => SetContact(0));
+      .then((data) => setTenant(data.length))
+      .catch(() => setTenant(0));
 
-
-    fetch(`${BACKENDURL}/award/partner/getpartners`) // Replace with actual API endpoint
+    fetch(`http://localhost:5000/stalls`)
       .then((response) => response.json())
-      .then((data) => setAward(data.length)
-      )
-      .catch(() => setAward(0));
+      .then((data) => setStallCode(data.length))
+      .catch(() => setStallCode(0));
 
-      fetch(`${BACKENDURL}/api/posts/services`) // Replace with actual API endpoint
+    fetch(`${BACKENDURL}/api/posts/room`)
       .then((response) => response.json())
-      .then((data) => Setservice(data.length)
-      )
-      .catch(() => Setservice(0));
+      .then((data) => setRoom(data.length))
+      .catch(() => setRoom(0));
 
-
-      fetch(`${BACKENDURL}/news/blog`) // Replace with actual API endpoint
+    fetch(`${BACKENDURL}/api/tenants/terminated`)
       .then((response) => response.json())
-      .then((data) => SetNews(data.length)
-      )
-      .catch(() => SetNews(0));
+      .then((data) => setTerminatedTenants(data.length))
+      .catch(() => setTerminatedTenants(0));
+
+    fetch(`${BACKENDURL}/api/utility/usage`)
+      .then((response) => response.json())
+      .then((data) => setUtilityUsage(data.length))
+      .catch(() => setUtilityUsage(0));
+
+      fetch(`${BACKENDURL}/maintenance-requests`)
+      .then((response) => response.json())
+      .then((data) => Setmaintenance(data.length))
+      .catch(() => Setmaintenance(0));
   }, []);
 
   const cardData = [
     {
-      title: 'contact',
-      icon: <MdContacts size={40} color={'rgb(0,140,255)'} />,
-      link: '/contact/info',
-      count: contact,
+      title: 'Tenants',
+      icon: <FaPeopleRoof size={40} color={'rgb(0,140,255)'} />,
+      link: '/tenants',
+      count: tenant,
     },
     {
-      title: 'service',
+      title: 'Stalls',
+      icon: <GiFlood size={40} color={'rgb(0,140,255)'} />,
+      link: '/stall-management',
+      count: stallcode,
+    },
+    {
+      title: 'Rooms',
+      icon: <MdOutlineBedroomParent size={40} color={'rgb(0,140,255)'} />,
+      link: '/stall-management',
+      count: room,
+    },
+    {
+      title: 'Terminated Tenants',
+      icon: <RiIndeterminateCircleFill size={40} color={'rgb(0,140,255)'} />,
+      link: '/terminated-tenants',
+      count: terminatedTenants,
+    },
+    {
+      title: 'Utility Usage',
       icon: <MdOutlineMedicalServices size={40} color={'rgb(0,140,255)'} />,
-      link: '/admin/service',
-      count: service,
+      link: '/utility-usage',
+      count: utilityUsage,
     },
     {
-      title: 'Award And Partners',
-      icon: <FaPeopleLine size={40} color={'rgb(0,140,255)'} />,
-      link: '/admin/partners',
-      count: award,
+      title: 'Maintenance',
+      icon: <GrHostMaintenance size={40} color={'rgb(0,140,255)'} />,
+      link: '/maintenance-requests',
+      count: maintenance,
     },
-    {
-      title: 'News And Blog',
-      icon: <FaRegNewspaper size={40} color={'rgb(0,140,255)'} />,
-      link: '/admin/blog',
-      count: news,
-    },
- 
   ];
 
   return (
@@ -78,15 +95,14 @@ const Dashboard = () => {;
             <Link to={card.link}>
               <Card
                 hoverable
-                
                 style={{ borderRadius: '10px', textAlign: 'center' }}
               >
                 <div>{card.icon}</div>
                 <h3>{card.title}</h3>
                 {card.count !== null ? (
-                  <p>{card.count} {card.title === 'Employee' ? 'Employees' : 'Items'}</p>
+                  <p>{card.count} {card.title}</p>
                 ) : (
-                  <Spin /> // Show spinner if data is still loading
+                  <Spin />
                 )}
               </Card>
             </Link>

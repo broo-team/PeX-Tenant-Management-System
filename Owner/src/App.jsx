@@ -35,6 +35,7 @@ import { GrHostMaintenance } from "react-icons/gr";
 import { IoNotifications } from "react-icons/io5";
 import { LuUtilityPole } from "react-icons/lu";
 import Utility from './pages/Utility/Utility';
+import TenantInfo from './components/TenantsInfo/TenantInfo';
 
 
 const {Header, Content, Sider} = Layout;
@@ -376,6 +377,7 @@ const App = () => {
             <Route element={<MaintenanceRequests/>} path="/maintenance-requests"/>
             <Route element={<RemindersAndNotifications/>} path="/reminders-notifications"/>
             <Route element={<Termination/>} path="/termination" />
+            <Route path="/tenants/:id" element={<TenantInfo />} />
             <Route element={<Utility/>} path="/utility/list" />
             <Route element={<PageNotFound />} path="*" />
 
